@@ -21,7 +21,7 @@
  */
 
 'use strict';
-const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAFy4to3WJWnTsZArPozqs8NIkkhMxbqwgkh2c7WkK1wn2x5jQDL5PkJVw9vx96TtZAPatH74uvi4ZBFjK4Ts222MZBXL2q0STmwxQM8OBZBCreqDtkvEJIRyhQqufqRiOLahJ5Hcvqk3jzoKmy0rcZAwiJxiHL5qvGOeIZAuFV0BvmaEJT274sZD";
+const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAERtJM0Wvp7DqyjsgbYgyiQzHlgO5OsujT6AAuwtyLpGI051hcN3jAnQUFIseWbCZA9BSP0wuu3yujKnhK0c6AgVhjCwpDrxglBOlJ4SuIKje7oyBE5TWhJEtLDm6cWNX3EUh5rcZAm9AgtdqhYEZBhdtMBnfT51EikVJVB8liImZAZBvWBMZD";
 // Imports dependencies and set up http server
 const 
   request = require('request'),
@@ -123,13 +123,13 @@ function handleMessage(sender_psid, received_message) {
         if(result.MaSoThue)
         {
           response = {
-            "text": `Mã số thuế: ${result.MaSoThue} <br> Tên công ty: ${result.Title}`
+            "text": `Mã số thuế: ${result.MaSoThue} <br /> Tên công ty: ${result.Title}`
           }
         }
         else
         {
           response = {
-            "text": `Giá trị nhập không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
+            "text": `Mã số thuế không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
           }
         }
         resolve()
