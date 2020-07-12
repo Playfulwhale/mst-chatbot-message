@@ -21,7 +21,7 @@
  */
 
 'use strict';
-//const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAFy4to3WJWnTsZArPozqs8NIkkhMxbqwgkh2c7WkK1wn2x5jQDL5PkJVw9vx96TtZAPatH74uvi4ZBFjK4Ts222MZBXL2q0STmwxQM8OBZBCreqDtkvEJIRyhQqufqRiOLahJ5Hcvqk3jzoKmy0rcZAwiJxiHL5qvGOeIZAuFV0BvmaEJT274sZD";
+const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAFy4to3WJWnTsZArPozqs8NIkkhMxbqwgkh2c7WkK1wn2x5jQDL5PkJVw9vx96TtZAPatH74uvi4ZBFjK4Ts222MZBXL2q0STmwxQM8OBZBCreqDtkvEJIRyhQqufqRiOLahJ5Hcvqk3jzoKmy0rcZAwiJxiHL5qvGOeIZAuFV0BvmaEJT274sZD";
 // Imports dependencies and set up http server
 const 
   request = require('request'),
@@ -100,63 +100,97 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-function handleMessage(sender_psid, received_message) {
-  let response;
-  
-  // Checks if the message contains text
-  if (received_message.text) {    
-    // Create the payload for a basic text message, which
-    // will be added to the body of our request to the Send API
-    response = {
-      "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
-    }
-  } else if (received_message.attachments) {
-    // Get the URL of the message attachment
-    let attachment_url = received_message.attachments[0].payload.url;
-    response = {
-      "attachment": {
-        "type": "template",
-        "payload": {
-          "template_type": "generic",
-          "elements": [{
-            "title": "Is this the right picture?",
-            "subtitle": "Tap a button to answer.",
-            "image_url": attachment_url,
-            "buttons": [
-              {
-                "type": "postback",
-                "title": "Yes!",
-                "payload": "yes",
-              },
-              {
-                "type": "postback",
-                "title": "No!",
-                "payload": "no",
-              }
-            ],
-          }]
-        }
-      }
-    }
-  } 
-  
-  // Send the response message
-  callSendAPI(sender_psid, response);    
+function GetAPI(method, url){
+  request({"uri": url, "method": "GET",}, (err, res, body) => {
+    console.log("body nè", body)
+    return body
+  })
 }
 
-function handlePostback(sender_psid, received_postback) {
-  console.log('ok')
-   let response;
-  // Get the payload for the postback
-  let payload = received_postback.payload;
+function handleMessage(sender_psid, received_message) {
+  let response;
+    console.log("nè nè");
+    
+    // Checks if the message contains text
+    
+  new Promise(function(resolve, reject) {
+    if (received_message.text) {    
+      // Create the payload for a basic text message, which
+      // will be added to the body of our request to the Send API
+      request({"uri": `https://mstcongty.com/api/v1/company/${received_message.text}`, "method": "GET",}, (err, res, body) => {
+        console.log("body nè", body)
+        var result = JSON.parse(`${body}`)
+        if(result.MaSoThue)
+        {
+          response = {
+            "text": `Mã số thuế: ${result.MaSoThue} <br> Tên công ty: ${result.Title}`
+          }
+        }
+        else
+        {
+          response = {
+            "text": `Giá trị nhập không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
+          }
+        }
+        resolve()
+      })
+    } else if (received_message.attachments) {
+      response = {
+        "text": `Giá trị nhập không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
+      }
+      resolve()
+      // Get the URL of the message attachment
+      // let attachment_url = received_message.attachments[0].payload.url;
+      // response = {
+      //   "attachment": {
+      //     "type": "template",
+      //     "payload": {
+      //       "template_type": "generic",
+      //       "elements": [{
+      //         "title": "Is this the right picture?",
+      //         "subtitle": "Tap a button to answer.",
+      //         "image_url": attachment_url,
+      //         "buttons": [
+      //           {
+      //             "type": "postback",
+      //             "title": "Yes!",
+      //             "payload": "yes",
+      //           },
+      //           {
+      //             "type": "postback",
+      //             "title": "No!",
+      //             "payload": "no",
+      //           }
+      //         ],
+      //       }]
+      //     }
+      //   }
+      // }
 
-  // Set the response based on the postback payload
-  if (payload === 'yes') {
-    response = { "text": "Thanks!" }
-  } else if (payload === 'no') {
-    response = { "text": "Oops, try sending another image." }
+    } 
+   
+  }).then(() => {
+    // Send the response message
+    callSendAPI(sender_psid, response);    
+  });
+    
+    
+    
   }
-  // Send the message to acknowledge the postback
+
+  function handlePostback(sender_psid, received_postback) {
+    console.log('ok')
+    let response;
+    // Get the payload for the postback
+    let payload = received_postback.payload;
+
+    // Set the response based on the postback payload
+    if (payload === 'yes') {
+      response = { "text": "Thanks!" }
+    } else if (payload === 'no') {
+      response = { "text": "Oops, try sending another image." }
+    }
+    // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
 }
 
@@ -168,11 +202,11 @@ function callSendAPI(sender_psid, response) {
     },
     "message": response
   }
-
+console.log("buon cuoi")
   // Send the HTTP request to the Messenger Platform
   request({
     "uri": "https://graph.facebook.com/v2.6/me/messages",
-    "qs": { "access_token": "EAAIkMpcD4z0BAFy4to3WJWnTsZArPozqs8NIkkhMxbqwgkh2c7WkK1wn2x5jQDL5PkJVw9vx96TtZAPatH74uvi4ZBFjK4Ts222MZBXL2q0STmwxQM8OBZBCreqDtkvEJIRyhQqufqRiOLahJ5Hcvqk3jzoKmy0rcZAwiJxiHL5qvGOeIZAuFV0BvmaEJT274sZD" },
+    "qs": { "access_token": PAGE_ACCESS_TOKEN },
     "method": "POST",
     "json": request_body
   }, (err, res, body) => {
