@@ -9,7 +9,7 @@ const
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
-
+const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAKxZApJcxf8Pi3hCunFvEZCfv08sieNlK6AZAvtpEoQ5HzZCqwHjBlMFDi59HGi60ZCYj1D5YxA3w6T7Ri9ssBLPdfTKi4DfZCM2ZAfpNKjbz6CDZBvpZCrcVgJRhB22iEZCsszTh5t41HRLygWEccdRIVri5MfphqLHFOaC1edYEKtsxjoDUOQVgZD"
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
  
@@ -25,6 +25,10 @@ app.post('/webhook', (req, res) => {
       // will only ever contain one message, so we get index 0
       let webhook_event = entry.messaging[0];
       console.log(webhook_event);
+
+      let sender_psid = webhook_event.sender.id;
+      console.log('Sender PSID: ' + sender_psid);
+
     });
 
     // Returns a '200 OK' response to all requests
