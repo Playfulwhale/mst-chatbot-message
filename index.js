@@ -21,7 +21,7 @@
  */
 
 'use strict';
-const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAFy4to3WJWnTsZArPozqs8NIkkhMxbqwgkh2c7WkK1wn2x5jQDL5PkJVw9vx96TtZAPatH74uvi4ZBFjK4Ts222MZBXL2q0STmwxQM8OBZBCreqDtkvEJIRyhQqufqRiOLahJ5Hcvqk3jzoKmy0rcZAwiJxiHL5qvGOeIZAuFV0BvmaEJT274sZD";
+//const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAFy4to3WJWnTsZArPozqs8NIkkhMxbqwgkh2c7WkK1wn2x5jQDL5PkJVw9vx96TtZAPatH74uvi4ZBFjK4Ts222MZBXL2q0STmwxQM8OBZBCreqDtkvEJIRyhQqufqRiOLahJ5Hcvqk3jzoKmy0rcZAwiJxiHL5qvGOeIZAuFV0BvmaEJT274sZD";
 // Imports dependencies and set up http server
 const 
   request = require('request'),
@@ -172,7 +172,7 @@ function callSendAPI(sender_psid, response) {
   // Send the HTTP request to the Messenger Platform
   request({
     "uri": "https://graph.facebook.com/v2.6/me/messages",
-    "qs": { "access_token": PAGE_ACCESS_TOKEN },
+    "qs": { "access_token": "EAAIkMpcD4z0BAFy4to3WJWnTsZArPozqs8NIkkhMxbqwgkh2c7WkK1wn2x5jQDL5PkJVw9vx96TtZAPatH74uvi4ZBFjK4Ts222MZBXL2q0STmwxQM8OBZBCreqDtkvEJIRyhQqufqRiOLahJ5Hcvqk3jzoKmy0rcZAwiJxiHL5qvGOeIZAuFV0BvmaEJT274sZD" },
     "method": "POST",
     "json": request_body
   }, (err, res, body) => {
