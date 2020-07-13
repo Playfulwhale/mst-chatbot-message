@@ -119,13 +119,18 @@ function handleMessage(sender_psid, received_message) {
     if (received_message.text) {    
       // Create the payload for a basic text message, which
       // will be added to the body of our request to the Send API
+      response = {
+        "text": `Chúng tôi đang tìm thông tin doanh nghiệp có mã số thuế ${received_message.text}, vui lòng đợi trong giây lát`
+      }
+      callSendAPI(sender_psid, response);  
+      callSendAPI(sender_psid, {"text": "..."});
       request({"uri": `${process.env.API_COMPANY_URL}/${received_message.text}`, "method": "GET",}, (err, res, body) => {
         console.log("body nè", body)
         var result = JSON.parse(`${body}`)
         if(result.MaSoThue)
         {
           response = {
-            "text": `Mã số thuế: ${result.MaSoThue}\nTên công ty: ${result.Title}\nNgười đại diện: ${result.ChuSoHuu}\nĐịa chỉ: ${result.DiaChiCongTy}\n\nĐể biết thêm ngành nghề của doanh nghiệp và các thông tin khác vui lòng truy cập \n${process.env.BASE_URL}/doanh-nghiep${result.SolrID}`
+            "text": `Mã số thuế: ${result.MaSoThue}\nTên công ty: ${result.Title}\nNgười đại diện: ${result.ChuSoHuu}\nĐịa chỉ: ${result.DiaChiCongTy}\n\nĐể biết thêm ngành nghề của doanh nghiệp và các thông tin khác vui lòng truy cập \n${process.env.BASE_URL}doanh-nghiep${result.SolrID}`
           }
         }
         else
@@ -135,39 +140,13 @@ function handleMessage(sender_psid, received_message) {
           }
         }
         resolve()
-      })
+        }
+      )
     } else if (received_message.attachments) {
       response = {
-        "text": `Giá trị nhập không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
-      }
+        "text": `Mã số thuế không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
+    }
       resolve()
-      // Get the URL of the message attachment
-      // let attachment_url = received_message.attachments[0].payload.url;
-      // response = {
-      //   "attachment": {
-      //     "type": "template",
-      //     "payload": {
-      //       "template_type": "generic",
-      //       "elements": [{
-      //         "title": "Is this the right picture?",
-      //         "subtitle": "Tap a button to answer.",
-      //         "image_url": attachment_url,
-      //         "buttons": [
-      //           {
-      //             "type": "postback",
-      //             "title": "Yes!",
-      //             "payload": "yes",
-      //           },
-      //           {
-      //             "type": "postback",
-      //             "title": "No!",
-      //             "payload": "no",
-      //           }
-      //         ],
-      //       }]
-      //     }
-      //   }
-      // }
 
     } 
    
