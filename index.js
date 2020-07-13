@@ -125,8 +125,7 @@ function handleMessage(sender_psid, received_message) {
         if(result.MaSoThue)
         {
           response = {
-            "text": `Mã số thuế: ${result.MaSoThue} 
-                    Tên công ty: ${result.Title}`
+            "text": `Mã số thuế: ${result.MaSoThue}\nTên công ty: ${result.Title}\nNgười đại diện: ${result.ChuSoHuu}\nĐịa chỉ: ${result.DiaChiCongTy}\n\nĐể biết thêm ngành nghề của doanh nghiệp và các thông tin khác vui lòng truy cập \n${process.env.BASE_URL}/doanh-nghiep${result.SolrID}`
           }
         }
         else
