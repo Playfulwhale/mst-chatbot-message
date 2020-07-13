@@ -21,8 +21,12 @@
  */
 
 'use strict';
-const PAGE_ACCESS_TOKEN = "EAAIkMpcD4z0BAERtJM0Wvp7DqyjsgbYgyiQzHlgO5OsujT6AAuwtyLpGI051hcN3jAnQUFIseWbCZA9BSP0wuu3yujKnhK0c6AgVhjCwpDrxglBOlJ4SuIKje7oyBE5TWhJEtLDm6cWNX3EUh5rcZAm9AgtdqhYEZBhdtMBnfT51EikVJVB8liImZAZBvWBMZD";
+require('dotenv').config()
+
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+console.log("PAGE_ACCESS_TOKEN", PAGE_ACCESS_TOKEN)
 // Imports dependencies and set up http server
+
 const 
   request = require('request'),
   express = require('express'),
@@ -109,21 +113,20 @@ function GetAPI(method, url){
 
 function handleMessage(sender_psid, received_message) {
   let response;
-    console.log("nè nè");
-    
     // Checks if the message contains text
     
   new Promise(function(resolve, reject) {
     if (received_message.text) {    
       // Create the payload for a basic text message, which
       // will be added to the body of our request to the Send API
-      request({"uri": `https://mstcongty.com/api/v1/company/${received_message.text}`, "method": "GET",}, (err, res, body) => {
+      request({"uri": `${process.env.API_COMPANY_URL}/${received_message.text}`, "method": "GET",}, (err, res, body) => {
         console.log("body nè", body)
         var result = JSON.parse(`${body}`)
         if(result.MaSoThue)
         {
           response = {
-            "text": `Mã số thuế: ${result.MaSoThue} <br /> Tên công ty: ${result.Title}`
+            "text": `Mã số thuế: ${result.MaSoThue} 
+                    Tên công ty: ${result.Title}`
           }
         }
         else
@@ -179,7 +182,6 @@ function handleMessage(sender_psid, received_message) {
   }
 
   function handlePostback(sender_psid, received_postback) {
-    console.log('ok')
     let response;
     // Get the payload for the postback
     let payload = received_postback.payload;
