@@ -116,35 +116,37 @@ function handleMessage(sender_psid, received_message) {
     // Checks if the message contains text
     
   new Promise(function(resolve, reject) {
-    if (received_message.text) {    
-      // Create the payload for a basic text message, which
-      // will be added to the body of our request to the Send API
+    if (!isNaN(received_message.text)) {    
       response = {
-        "text": `Chúng tôi đang tìm thông tin doanh nghiệp có mã số thuế ${received_message.text}, vui lòng đợi trong giây lát`
+        "text": `Chúng tôi đang tìm thông tin doanh nghiệp có mã số thuế "${received_message.text}".\nVui lòng đợi trong giây lát...`
       }
-      callSendAPI(sender_psid, response);  
-      callSendAPI(sender_psid, {"text": "..."});
+      new Promise(() => {
+        callSendAPI(sender_psid, response);  
+      }).then(() => {
+        callSendAPI(sender_psid, {"text": "..."});  
+      })
+
       request({"uri": `${process.env.API_COMPANY_URL}/${received_message.text}`, "method": "GET",}, (err, res, body) => {
         console.log("body nè", body)
         var result = JSON.parse(`${body}`)
         if(result.MaSoThue)
         {
           response = {
-            "text": `Mã số thuế: ${result.MaSoThue}\nTên công ty: ${result.Title}\nNgười đại diện: ${result.ChuSoHuu}\nĐịa chỉ: ${result.DiaChiCongTy}\n\nĐể biết thêm ngành nghề của doanh nghiệp và các thông tin khác vui lòng truy cập \n${process.env.BASE_URL}doanh-nghiep${result.SolrID}`
+            "text": `*Mã số thuế: ${result.MaSoThue}\n*Tên công ty: ${result.Title}\n*Người đại diện: ${result.ChuSoHuu}\n*Địa chỉ: ${result.DiaChiCongTy}\n\nĐể biết thêm ngành nghề của doanh nghiệp và các thông tin khác vui lòng truy cập \n${process.env.BASE_URL}doanh-nghiep${result.SolrID}`
           }
         }
         else
         {
           response = {
-            "text": `Mã số thuế không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
+            "text": `Chúng tôi không tìm thấy doanh nghiệp có mã số thuế như bạn vừa nhập. Vui lòng kiểm tra và thử lại!`
           }
         }
         resolve()
         }
       )
-    } else if (received_message.attachments) {
+    } else {
       response = {
-        "text": `Mã số thuế không hợp lệ. Bạn vui lòng nhập chính xác mã số thuế muốn tra cứu`
+        "text": `Mã số thuế bạn vừa nhập không hợp lệ! Vui lòng kiểm tra và thử lại! Lưu ý: mã số thuế phải là số.`
     }
       resolve()
 
@@ -182,7 +184,6 @@ function callSendAPI(sender_psid, response) {
     },
     "message": response
   }
-console.log("buon cuoi")
   // Send the HTTP request to the Messenger Platform
   request({
     "uri": "https://graph.facebook.com/v2.6/me/messages",
