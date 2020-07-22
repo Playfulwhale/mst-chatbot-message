@@ -80,7 +80,7 @@ app.post('/webhook', (req, res) => {
 app.get('/webhook', (req, res) => {
   
   /** UPDATE YOUR VERIFY TOKEN **/
-  const VERIFY_TOKEN = "ahihidongoc";
+  const { VERIFY_TOKEN } = process.env
   
   // Parse params from the webhook verification request
   let mode = req.query['hub.mode'];
@@ -104,12 +104,6 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-function GetAPI(method, url){
-  request({"uri": url, "method": "GET",}, (err, res, body) => {
-    console.log("body nè", body)
-    return body
-  })
-}
 
 function handleMessage(sender_psid, received_message) {
   let response;
